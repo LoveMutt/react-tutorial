@@ -1,6 +1,17 @@
 var CommentBox = React.createClass({
   handleCommentSubmit: function(comment) {
-    // TODO: submit to the server and refresh the list
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: comment,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
   },
   loadCommentsFromServer: function() {
     $.ajax({
@@ -49,6 +60,7 @@ var CommentList = React.createClass({
     );
   }
 });
+
 var CommentForm = React.createClass({
   getInitialState: function() {
     return {author: '', text: ''};
@@ -90,7 +102,6 @@ var CommentForm = React.createClass({
   }
 });
 
-// tutorial4.js
 var Comment = React.createClass({
   rawMarkup: function() {
     var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
